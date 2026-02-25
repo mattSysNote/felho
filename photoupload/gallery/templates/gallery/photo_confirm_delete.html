@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Biztosan törölni akarod a "{{ photo.title }}" képet?</h2>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Igen, törlés</button>
+        <a href="{% url 'photo_list' %}" class="btn">Mégse</a>
+    </form>
+{% endblock %}

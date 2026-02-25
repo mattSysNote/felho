@@ -1,0 +1,21 @@
+python manage.py makemigrations
+python manage.py migrate
+
+python manage.py runserver
+
+
+sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+sudo resize2fs /dev/ubuntu-vg/ubuntu-lv
+
+
+
+tar -xvf crc-linux-amd64.tar.xz
+cd crc-linux-*-amd64
+sudo mv crc /usr/local/bin/
+crc version
+
+sudo apt update
+sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients virt-manager network-manager
+
+sudo usermod -aG libvirt $USER
+sudo usermod -aG kvm $USER
