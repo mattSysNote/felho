@@ -32,3 +32,4 @@ A megoldás forrásfájljai, és egy dokumentációja GitHub-on. (linket kell me
 Működó alkalmazás a PaaS környezetben (be kell mutatni)
 A feladatot bontsa két fő részfeladatra (pl. nincs még minden funkció kész) Ez lesz az első beadás (4. feladat) 
 A végleges, külön adatbázis-szerverrel működő változat lesz az 5. feladat beadása.
+
