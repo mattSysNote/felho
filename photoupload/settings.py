@@ -82,7 +82,13 @@ if os.environ.get('DB_NAME') and os.environ.get('DB_HOST'):
         }
     }
 else:
-    raise ImproperlyConfigured("Database settings not found in environment.")
+    print("PostgreSQL setup is missing!")
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
