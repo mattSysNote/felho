@@ -24,7 +24,6 @@ oc new-app "python~https://github.com/mattSysNote/felho.git" --name=django-backe
 # 7. lépés
 oc set volumes deployment/django-backend --add --name=media-storage --type=pvc --claim-name=media-pvc --claim-size=1Gi --mount-path=/app/media
 
-
 oc patch deployment/django-backend  --patch '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":2000}}}}}'
 
 # 8. lépés
@@ -58,8 +57,6 @@ oc set env deployment/django-backend SECRET_KEY=<SECRET_KEY> DEBUG=False
 
 # Stop the Django backend
 oc scale deployment/django-backend --replicas=0
-
-# Stop the Postgres database
 oc scale deployment/postgresql --replicas=0
 
 
