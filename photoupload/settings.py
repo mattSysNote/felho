@@ -8,7 +8,7 @@ import os
 # DIR:
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY
+# SECURITY (https://docs.djangoproject.com/en/6.0/topics/security/)
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-default-key-for-dev-only')
 
 allowed_hosts_env = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1')
@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csp.ContentSecurityPolicyMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -57,6 +58,33 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'photoupload.urls'
+
+from django.utils.csp import CSP
+SECURE_CSP = {
+    "default-src": [CSP.SELF],
+    "style-src": [
+        "'self'",
+        "https://fonts.googleapis.com",
+        "https://cdnjs.cloudflare.com",
+        "'unsafe-inline'" # tailwindcss static generation needed with npm
+    ],
+    "script-src": [
+        "'self'",
+        "https://cdn.tailwindcss.com",
+        "'unsafe-eval'" # tailwindcss static generation needed with npm.
+    ],
+    "font-src": [
+        "'self'",
+        "https://fonts.gstatic.com",
+        "https://cdnjs.cloudflare.com"
+    ],
+    "img-src": [
+        "'self'",
+        "data:",
+        "https://cdnjs.cloudflare.com",
+        "https://*.gstatic.com",
+    ]
+}
 
 TEMPLATES = [
     {

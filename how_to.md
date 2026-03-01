@@ -22,7 +22,8 @@ oc secrets link builder github-secret
 oc new-app "python~https://github.com/mattSysNote/felho.git" --name=django-backend --source-secret=github-secret -e DB_HOST=postgresql -e DB_PORT=5432 -e DB_NAME=<DB_NAME> -e DB_USER=<USER> -e DB_PASSWORD=<PASSWORD> -e SECRET_KEY=<SECRET_KEY> -e DEBUG=False
 
 # 7. lépés
-oc set volumes deployment/django-backend --add --name=media-storage --type=pvc --claim-name=media-pvc --claim-size=1Gi --mount-path=/app/media
+oc set volumes deployment/django-backend --add --name=media-storage --type=pvc --claim-name=media-pvc --claim-size=1Gi --mount-path=/opt/app-root/src/media
+oc set volume deployment/django-backend --add --name=media-storage --type=persistentVolumeClaim --claim-name=media-pvc --mount-path=/opt/app-root/src/media --overwrite
 
 oc patch deployment/django-backend  --patch '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":2000}}}}}'
 
@@ -41,7 +42,7 @@ oc start-build django-backend --follow
           command:
             - /bin/bash
             - '-c'
-            - 'python manage.py makemigrations gallery && python manage.py migrate && gunicorn --bind 0.0.0.0:8080 photoupload.wsgi'
+            - 'python manage.py migrate && gunicorn --bind 0.0.0.0:8080 photoupload.wsgi'
 # Törlések:
 oc delete all -l app=django-backend
 oc delete svc django-backend
@@ -58,6 +59,8 @@ oc set env deployment/django-backend SECRET_KEY=<SECRET_KEY> DEBUG=False
 # Stop the Django backend
 oc scale deployment/django-backend --replicas=0
 oc scale deployment/postgresql --replicas=0
+
+oc describe bc/django-backend
 
 
 
