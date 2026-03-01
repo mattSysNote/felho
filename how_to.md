@@ -49,6 +49,7 @@ oc delete svc django-backend
 oc delete deployment django-backend
 oc delete svc postgresql
 oc delete deployment postgresql
+python manage.py migrate gallery zero
 
 
 # plusz env:
@@ -60,5 +61,8 @@ oc scale deployment/django-backend --replicas=0
 
 # Stop the Postgres database
 oc scale deployment/postgresql --replicas=0
+
+
+
 
 

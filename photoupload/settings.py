@@ -19,7 +19,10 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # OpenShift routes change, so we allow all hosts in the Sandbox, 
 # or specific ones provided via env vars.
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
+
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'localhost').split(',')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
