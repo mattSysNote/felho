@@ -36,6 +36,7 @@ oc get route django-backend
 
 oc delete route django-backend
 oc create route edge --service=django-backend --port=8080
+oc start-build django-backend --follow
 
 
 
