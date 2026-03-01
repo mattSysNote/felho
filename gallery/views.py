@@ -6,6 +6,7 @@ from django.http import HttpResponseForbidden
 from django.contrib.auth import login
 from .models import Photo
 from PIL import Image
+import os
 import io
 
 # list images
@@ -32,21 +33,39 @@ def photo_upload(request):
         if form.is_valid():
             photo = form.save(commit=False)
             uploaded_image = form.cleaned_data['image']
+            
+            # --- 1. Process Image (Remove EXIF) ---
             img = Image.open(uploaded_image)
             data = list(img.getdata())
             image_without_exif = Image.new(img.mode, img.size)
             image_without_exif.putdata(data)
 
             buffer = io.BytesIO()
+            
+            img_format = img.format if img.format else 'JPEG'
+            image_without_exif.save(buffer, format=img_format) 
 
-            image_without_exif.save(buffer, format=img.format) 
-            photo.image.save(uploaded_image.name, ContentFile(buffer.getvalue()), save=False)
+            filename, ext = os.path.splitext(uploaded_image.name)
+
+            max_name_length = 40 - len(ext)
+            
+            if len(filename) > max_name_length:
+                # Cut the filename to fit
+                filename = filename[:max_name_length]
+            
+            # Reassemble the final name
+            final_filename = f"{filename}{ext}"
+
+            # --- 3. Save ---
+            # Save the processed image with the shortened name
+            photo.image.save(final_filename, ContentFile(buffer.getvalue()), save=False)
 
             photo.uploaded_by = request.user
             photo.save()
             return redirect('photo_list')
     else:
         form = PhotoUploadForm()
+    
     return render(request, 'gallery/photo_upload.html', {'form': form})
 
 # delete

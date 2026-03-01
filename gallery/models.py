@@ -13,7 +13,7 @@ def unique_file_path(instance, filename):
 class Photo(models.Model):
     image = models.ImageField(upload_to=unique_file_path)
     
-    title = models.CharField(max_length=100, verbose_name="Kép címe") # original title
+    title = models.CharField(max_length=40, verbose_name="Kép címe") # original title
     uploaded_at = models.DateTimeField(auto_now_add=True)
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
