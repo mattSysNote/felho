@@ -1,48 +1,60 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Photo
-from .forms import PhotoUploadForm, RegistrationForm # Feltételezve, hogy léteznek
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login
+from .forms import PhotoUploadForm, RegistrationForm
+from django.core.files.base import ContentFile
 from django.http import HttpResponseForbidden
+from django.contrib.auth import login
+from .models import Photo
+from PIL import Image
+import io
 
-# 1. Fényképek listázása
+# list images
 def photo_list(request):
     sort_by = request.GET.get('sort', 'name')
     
     if sort_by == 'date':
         photos = Photo.objects.order_by('-uploaded_at')
     else:
-        # Figyelj: a modellben 'title'-t írtam, ha nálad 'name', akkor javítsd át!
         photos = Photo.objects.order_by('title') 
 
     return render(request, 'gallery/photo_list.html', {'photos': photos})
 
-# 2. Részletes nézet
+# detail view
 def photo_detail(request, pk):
     photo = get_object_or_404(Photo, pk=pk)
     return render(request, 'gallery/photo_detail.html', {'photo': photo})
 
-# 3. Feltöltés (Javítva és biztonságosabb)
+# upload
 @login_required
 def photo_upload(request):
     if request.method == 'POST':
         form = PhotoUploadForm(request.POST, request.FILES)
         if form.is_valid():
             photo = form.save(commit=False)
-            # JAVÍTVA: egységesen 'uploaded_by' használata
-            photo.uploaded_by = request.user 
+            uploaded_image = form.cleaned_data['image']
+            img = Image.open(uploaded_image)
+            data = list(img.getdata())
+            image_without_exif = Image.new(img.mode, img.size)
+            image_without_exif.putdata(data)
+
+            buffer = io.BytesIO()
+
+            image_without_exif.save(buffer, format=img.format) 
+            photo.image.save(uploaded_image.name, ContentFile(buffer.getvalue()), save=False)
+
+            photo.uploaded_by = request.user
             photo.save()
             return redirect('photo_list')
     else:
         form = PhotoUploadForm()
     return render(request, 'gallery/photo_upload.html', {'form': form})
 
-# 4. Törlés (Biztonsági ellenőrzéssel)
+# delete
 @login_required
 def photo_delete(request, pk):
     photo = get_object_or_404(Photo, pk=pk)
     
-    # BIZTONSÁG: Csak a tulajdonos vagy admin törölhet
+    # security only the owner or the admin can delet image
     if request.user != photo.uploaded_by and not request.user.is_superuser:
         return HttpResponseForbidden("Nincs jogosultsága törölni ezt a képet.")
     
@@ -52,10 +64,10 @@ def photo_delete(request, pk):
         
     return render(request, 'gallery/photo_confirm_delete.html', {'photo': photo})
 
-# 5. Regisztráció
+# register
 def register(request):
     if request.user.is_authenticated:
-        return redirect('photo_list') # Ha már be van lépve, ne regisztráljon újra
+        return redirect('photo_list')
 
     if request.method == 'POST':
         form = RegistrationForm(request.POST)

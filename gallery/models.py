@@ -11,11 +11,9 @@ def unique_file_path(instance, filename):
     return os.path.join('photos', filename)
 
 class Photo(models.Model):
-    # Itt használjuk a fenti függvényt az 'upload_to' paraméternél
     image = models.ImageField(upload_to=unique_file_path)
     
-    # Eredeti név megtartása (opcionális, de hasznos a megjelenítéshez)
-    title = models.CharField(max_length=100, verbose_name="Kép címe")
+    title = models.CharField(max_length=100, verbose_name="Kép címe") # original title
     uploaded_at = models.DateTimeField(auto_now_add=True)
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
