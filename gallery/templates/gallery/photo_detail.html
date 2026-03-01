@@ -43,11 +43,11 @@
                 <div class="space-y-4 pt-4 border-t border-gray-50">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold">
-                            {{ photo.uploader.username|slice:":1"|upper }}
+                            {{ photo.uploaded_by.username|slice:":1"|upper }}
                         </div>
                         <div>
                             <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Feltöltő</p>
-                            <p class="text-sm font-semibold text-gray-800">{{ photo.upload_by.username }}</p>
+                            <p class="text-sm font-semibold text-gray-800">{{ photo.uploaded_by.username }}</p>
                         </div>
                     </div>
 
@@ -65,7 +65,7 @@
                         <i class="fa-solid fa-expand mr-2"></i> Teljes méret
                     </a>
                     
-                    {% if user == photo.uploader or user.is_superuser %}
+                    {% if user == photo.uploaded_by or user.is_superuser %}
                     <a href="{% url 'photo_delete' photo.pk %}" 
                        onclick="return confirm('Biztosan véglegesen törölni szeretnéd ezt a fotót?')"
                        class="flex items-center justify-center px-4 py-3 border-2 border-red-100 text-red-500 rounded-xl font-bold text-sm hover:bg-red-50 transition-all">
