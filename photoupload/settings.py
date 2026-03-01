@@ -81,24 +81,6 @@ if os.environ.get('DB_NAME') and os.environ.get('DB_HOST'):
             'PORT': os.environ.get('DB_PORT', '5432'),
         }
     }
-# 2. Fallback: Check for a single DATABASE_URL string
-elif os.environ.get('DATABASE_URL'):
-    DATABASES = {
-        'default': dj_database_url.config(
-            conn_max_age=600,
-            conn_health_checks=True,
-            ssl_require=False
-        )
-    }
-# 3. Fallback: Local SQLite (Only if DEBUG is True)
-elif DEBUG:
-    print("WARNING: Using local SQLite database.")
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
 else:
     raise ImproperlyConfigured("Database settings not found in environment.")
 

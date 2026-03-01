@@ -34,6 +34,9 @@ oc expose service django-backend --port=8080
 oc scale deployment django-backend --replicas=1
 oc get route django-backend
 
+oc delete route django-backend
+oc create route edge --service=django-backend --port=8080
+
 
 
 # Törlések:
