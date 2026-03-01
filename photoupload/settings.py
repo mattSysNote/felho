@@ -4,25 +4,16 @@ Django settings for photoupload project.
 
 from pathlib import Path
 import os
-import dj_database_url
-from django.core.exceptions import ImproperlyConfigured
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# DIR:
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# SECURITY
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-default-key-for-dev-only')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-# In OpenShift, set this to False via environment variable
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-
-# OpenShift routes change, so we allow all hosts in the Sandbox, 
-# or specific ones provided via env vars.
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
-
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'localhost').split(',')
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 
 # Application definition

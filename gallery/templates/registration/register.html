@@ -1,10 +1,95 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Regisztráció</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn">Regisztráció</button>
-    </form>
+<div class="max-w-lg mx-auto my-8">
+    <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-100 text-purple-600 rounded-full mb-4">
+            <i class="fa-solid fa-user-plus text-2xl"></i>
+        </div>
+        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Fiók létrehozása</h2>
+        <p class="mt-2 text-sm text-gray-500">Csatlakozz a PhotoLife közösségéhez és oszd meg a világgal a látásmódodat.</p>
+    </div>
+
+    <div class="bg-white p-2">
+        <form method="post" class="space-y-5">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-1">
+                        {{ field.label }}
+                    </label>
+                    
+                    <div class="relative">
+                        {{ field }}
+                        
+                        {% if field.help_text %}
+                            <p class="mt-1 text-xs text-gray-400">{{ field.help_text|safe }}</p>
+                        {% endif %}
+                        
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <p class="mt-1 text-xs text-red-500 font-medium">
+                                    <i class="fa-solid fa-circle-exclamation mr-1"></i>{{ error }}
+                                </p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="pt-4">
+                <button type="submit" 
+                    class="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all shadow-lg transform hover:-translate-y-0.5">
+                    Fiók létrehozása
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+            <p class="text-sm text-gray-600">
+                Már tag vagy nálunk? 
+                <a href="{% url 'login' %}" class="font-bold text-indigo-600 hover:text-indigo-500 transition-colors">
+                    Lépj be itt!
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Megcélozzuk a Django által generált inputokat a formon belül */
+    input[type="text"], 
+    input[type="password"], 
+    input[type="email"], 
+    input[type="number"],
+    select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.75rem; /* rounded-xl szebb */
+        background-color: #ffffff;
+        transition: all 0.2s;
+        outline: none;
+    }
+
+    input:focus {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    /* Ha hiba van a mezőben */
+    .form-group.has-error input {
+        border-color: #ef4444;
+    }
+    
+    /* A Django help_text listáinak (ul/li) alaphelyzetbe állítása */
+    ul.helptext {
+        list-style: none;
+        padding: 0;
+        margin-top: 4px;
+        font-size: 0.75rem;
+        color: #9ca3af;
+    }
+</style>
 {% endblock %}

@@ -1,29 +1,77 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Galéria</h1>
-    
-    <div>
-        Rendezés: 
-        <a href="?sort=name">Név szerint</a> | 
-        <a href="?sort=date">Dátum szerint</a>
-    </div>
-    <br>
+<div class="space-y-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-6">
+        <div>
+            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Galéria</h1>
+            <p class="text-gray-500 text-sm mt-1">Fedezd fel a közösség legfrissebb pillanatait.</p>
+        </div>
 
-    <ul>
-    {% for photo in photos %}
-        <li>
-            <a href="{% url 'photo_detail' photo.pk %}">
-                <strong>{{ photo.title }}</strong>
-            </a> 
-            <small>({{ photo.uploaded_at|date:"Y-m-d H:i" }})</small>
-            
-            {% if user.is_authenticated %}
-               - <a href="{% url 'photo_delete' photo.pk %}" style="color:red;">Törlés</a>
-            {% endif %}
-        </li>
-    {% empty %}
-        <li>Nincs még feltöltött kép.</li>
-    {% endfor %}
-    </ul>
+        <div class="flex items-center space-x-2 bg-gray-100 p-1 rounded-xl">
+            <span class="text-xs font-bold text-gray-400 px-3 uppercase tracking-wider">Rendezés:</span>
+            <a href="?sort=name" class="px-4 py-2 text-sm font-medium rounded-lg transition-all {% if request.GET.sort == 'name' %}bg-white shadow-sm text-indigo-600{% else %}text-gray-600 hover:text-indigo-600{% endif %}">
+                <i class="fa-solid fa-sort-alpha-down mr-2"></i>Név
+            </a>
+            <a href="?sort=date" class="px-4 py-2 text-sm font-medium rounded-lg transition-all {% if request.GET.sort == 'date' or not request.GET.sort %}bg-white shadow-sm text-indigo-600{% else %}text-gray-600 hover:text-indigo-600{% endif %}">
+                <i class="fa-solid fa-calendar-days mr-2"></i>Dátum
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        {% for photo in photos %}
+            <div class="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                
+                <div class="aspect-square overflow-hidden bg-gray-200">
+                    {% if photo.image %}
+                        <img src="{{ photo.image.url }}" alt="{{ photo.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-gray-400">
+                            <i class="fa-solid fa-image text-4xl"></i>
+                        </div>
+                    {% endif %}
+                    
+                    {% if user.is_authenticated %}
+                    <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <a href="{% url 'photo_delete' photo.pk %}" 
+                           class="bg-white/90 hover:bg-red-500 hover:text-white text-red-500 p-2 rounded-full shadow-lg transition-all"
+                           onclick="return confirm('Biztosan törölni szeretnéd?')">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="p-4">
+                    <a href="{% url 'photo_detail' photo.pk %}" class="block">
+                        <h3 class="font-bold text-gray-800 truncate group-hover:text-indigo-600 transition-colors" title="{{ photo.title }}">
+                            {{ photo.title }}
+                        </h3>
+                    </a>
+                    <div class="flex items-center justify-between mt-2">
+                        <span class="text-xs text-gray-400 flex items-center">
+                            <i class="fa-regular fa-clock mr-1"></i>
+                            {{ photo.uploaded_at|date:"Y. m. d." }}
+                        </span>
+                        <a href="{% url 'photo_detail' photo.pk %}" class="text-indigo-500 hover:text-indigo-700 text-xs font-bold uppercase tracking-wider">
+                            Részletek <i class="fa-solid fa-chevron-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-span-full py-20 text-center">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 text-gray-400 rounded-full mb-4">
+                    <i class="fa-solid fa-camera text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800">Nincs még feltöltött kép</h3>
+                <p class="text-gray-500 mt-2">Legyél te az első, aki megoszt egy emléket!</p>
+                <a href="{% url 'photo_upload' %}" class="inline-block mt-6 px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors">
+                    Kép feltöltése
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

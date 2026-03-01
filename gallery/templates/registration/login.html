@@ -1,10 +1,74 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Belépés</h2>
-    <form method="post">
+<div class="max-w-md mx-auto my-12">
+    <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full mb-4">
+            <i class="fa-solid fa-lock text-2xl"></i>
+        </div>
+        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Üdvözöljük újra!</h2>
+        <p class="mt-2 text-sm text-gray-500">Kérjük, lépjen be a fiókjába a folytatáshoz.</p>
+    </div>
+
+    {% if form.errors %}
+        <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-lg animate-pulse">
+            <p class="font-bold">Hiba történt:</p>
+            <p>Helytelen felhasználónév vagy jelszó!</p>
+        </div>
+    {% endif %}
+
+    <form method="post" class="space-y-6">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn">Belépés</button>
+        
+        <div>
+            <label for="{{ form.username.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-1">
+                Felhasználónév
+            </label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <i class="fa-solid fa-user text-sm"></i>
+                </div>
+                <input type="text" name="username" id="id_username" 
+                    class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all" 
+                    placeholder="pelda_felhasznalo" required>
+            </div>
+        </div>
+
+        <div>
+            <label for="{{ form.password.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-1">
+                Jelszó
+            </label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <i class="fa-solid fa-key text-sm"></i>
+                </div>
+                <input type="password" name="password" id="id_password" 
+                    class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all" 
+                    placeholder="••••••••" required>
+            </div>
+            <div class="flex justify-end mt-2">
+                <a href="#" class="text-xs font-medium text-indigo-600 hover:text-indigo-500 transition-colors">Elfelejtett jelszó?</a>
+            </div>
+        </div>
+
+        <div>
+            <button type="submit" 
+                class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all shadow-lg hover:shadow-indigo-200">
+                <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                    <i class="fa-solid fa-right-to-bracket text-indigo-400 group-hover:text-indigo-300"></i>
+                </span>
+                Belépés
+            </button>
+        </div>
     </form>
+
+    <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+        <p class="text-sm text-gray-600">
+            Még nincs fiókod? 
+            <a href="{% url 'register' %}" class="font-bold text-indigo-600 hover:text-indigo-500 transition-colors">
+                Regisztrálj most!
+            </a>
+        </p>
+    </div>
+</div>
 {% endblock %}

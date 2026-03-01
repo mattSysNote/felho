@@ -1,10 +1,101 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Új kép feltöltése</h2>
-    <form method="post" enctype="multipart/form-data">
+<div class="max-w-2xl mx-auto my-8">
+    <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 text-blue-600 rounded-full mb-4">
+            <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
+        </div>
+        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Új kép feltöltése</h2>
+        <p class="mt-2 text-sm text-gray-500">Oszd meg a legújabb alkotásodat a közösséggel.</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn">Feltöltés</button>
+
+        <div class="space-y-1">
+            <label for="{{ form.title.id_for_label }}" class="block text-sm font-semibold text-gray-700">
+                A kép címe
+            </label>
+            <input type="text" name="title" id="id_title" maxlength="100" required
+                class="block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                placeholder="Pl.: Naplemente a Balatonnál">
+            {% if form.title.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.title.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <div class="space-y-1">
+            <label class="block text-sm font-semibold text-gray-700">Fotó kiválasztása</label>
+            <div id="dropzone" class="relative group border-2 border-dashed border-gray-300 rounded-2xl p-10 flex flex-col items-center justify-center hover:border-blue-500 hover:bg-blue-50/50 transition-all cursor-pointer">
+                
+                <input type="file" name="image" id="id_image" accept="image/*" required
+                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+
+                <div id="upload-placeholder" class="text-center space-y-4">
+                    <div class="w-16 h-16 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 group-hover:bg-blue-100 group-hover:text-blue-600 transition-all duration-300">
+                        <i class="fa-solid fa-image text-2xl"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-sm font-bold text-gray-700">Kattints a feltöltéshez</p>
+                        <p class="text-xs text-gray-400">vagy húzd ide a fájlt (JPG, PNG, WEBP)</p>
+                    </div>
+                </div>
+
+                <div id="file-info" class="hidden text-center animate-fadeIn">
+                    <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fa-solid fa-check text-2xl"></i>
+                    </div>
+                    <p id="filename" class="text-sm font-semibold text-gray-800 truncate max-w-xs"></p>
+                    <button type="button" id="reset-upload" class="text-xs text-red-500 font-bold mt-2 hover:underline relative z-20">Másik fájl választása</button>
+                </div>
+            </div>
+            {% if form.image.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.image.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <div class="flex items-center gap-4 pt-4">
+            <a href="{% url 'photo_list' %}" class="flex-1 text-center px-6 py-3 border border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-colors">
+                Mégse
+            </a>
+            <button type="submit" class="flex-[2] py-3 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-blue-200 transform hover:-translate-y-0.5 transition-all">
+                Kép publikálása
+            </button>
+        </div>
     </form>
+</div>
+
+<script>
+    const fileInput = document.getElementById('id_image');
+    const placeholder = document.getElementById('upload-placeholder');
+    const fileInfo = document.getElementById('file-info');
+    const filenameLabel = document.getElementById('filename');
+    const resetButton = document.getElementById('reset-upload');
+
+    fileInput.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+            filenameLabel.textContent = this.files[0].name;
+            placeholder.classList.add('hidden');
+            fileInfo.classList.remove('hidden');
+        }
+    });
+
+    resetButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        fileInput.value = '';
+        fileInfo.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+    });
+</script>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+        animation: fadeIn 0.3s ease-out forwards;
+    }
+</style>
 {% endblock %}
