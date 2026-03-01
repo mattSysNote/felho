@@ -70,9 +70,6 @@ WSGI_APPLICATION = 'photoupload.wsgi.application'
 
 
 # Database
-# Modified to accept individual ENV variables from your oc new-app command
-
-# 1. Check if specific DB args are present (from your oc new-app command)
 if os.environ.get('DB_NAME') and os.environ.get('DB_HOST'):
     DATABASES = {
         'default': {
@@ -95,7 +92,6 @@ else:
 
 
 # Password validation
-
 AUTH_PASSWORD_VALIDATORS = [
     { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
     { 'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
@@ -105,7 +101,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
