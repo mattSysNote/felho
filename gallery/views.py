@@ -33,8 +33,8 @@ def photo_upload(request):
         if form.is_valid():
             photo = form.save(commit=False)
             uploaded_image = form.cleaned_data['image']
-            
-            # --- 1. Process Image (Remove EXIF) ---
+
+            # metadata remove:
             img = Image.open(uploaded_image)
             data = list(img.getdata())
             image_without_exif = Image.new(img.mode, img.size)
@@ -45,20 +45,9 @@ def photo_upload(request):
             img_format = img.format if img.format else 'JPEG'
             image_without_exif.save(buffer, format=img_format) 
 
-            filename, ext = os.path.splitext(uploaded_image.name)
+            filename = uploaded_image.name[:40]
 
-            max_name_length = 40 - len(ext)
-            
-            if len(filename) > max_name_length:
-                # Cut the filename to fit
-                filename = filename[:max_name_length]
-            
-            # Reassemble the final name
-            final_filename = f"{filename}{ext}"
-
-            # --- 3. Save ---
-            # Save the processed image with the shortened name
-            photo.image.save(final_filename, ContentFile(buffer.getvalue()), save=False)
+            photo.image.save(filename, ContentFile(buffer.getvalue()), save=False)
 
             photo.uploaded_by = request.user
             photo.save()
