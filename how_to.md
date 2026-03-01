@@ -38,8 +38,11 @@ oc delete route django-backend
 oc create route edge --service=django-backend --port=8080
 oc start-build django-backend --follow
 
-
-
+# 10. lépés
+          command:
+            - /bin/bash
+            - '-c'
+            - 'python manage.py makemigrations gallery && python manage.py migrate && gunicorn --bind 0.0.0.0:8080 photoupload.wsgi'
 # Törlések:
 oc delete all -l app=django-backend
 oc delete svc django-backend
@@ -57,3 +60,5 @@ oc scale deployment/django-backend --replicas=0
 
 # Stop the Postgres database
 oc scale deployment/postgresql --replicas=0
+
+

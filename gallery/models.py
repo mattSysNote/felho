@@ -1,15 +1,23 @@
+import os
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
 
+
+# uuid for security
+def unique_file_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f"{uuid.uuid4()}.{ext}"
+    return os.path.join('photos', filename)
+
 class Photo(models.Model):
-    # Név: max 40 karakter
-    title = models.CharField(max_length=40, verbose_name="Fénykép neve")
-    # A képfájl tárolása
-    image = models.ImageField(upload_to='photos/', verbose_name="Képfájl")
-    # Feltöltés dátuma (automatikus)
-    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="Feltöltve")
-    # Opcionális funkció: összekötjük a feltöltővel
-    uploader = models.ForeignKey(User, on_delete=models.CASCADE, default=None, null=True, verbose_name="Feltöltő")
+    # Itt használjuk a fenti függvényt az 'upload_to' paraméternél
+    image = models.ImageField(upload_to=unique_file_path)
+    
+    # Eredeti név megtartása (opcionális, de hasznos a megjelenítéshez)
+    title = models.CharField(max_length=100, verbose_name="Kép címe")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
