@@ -63,6 +63,9 @@ oc scale deployment/postgresql --replicas=0
 oc describe bc/django-backend
 
 
+oc scale deployment/postgresql --replicas=1
+oc scale deployment/django-backend --replicas=1
+
 
 
 
