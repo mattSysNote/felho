@@ -6,13 +6,13 @@ Adatbazás: Postgresql + persistent volume claim
 - A képek metadatait, magát a képet és a felhasználó adatokat szintén a postgres-ban tárolom
 
 # Feladat: 
-&check; Fényképek feltöltése/törlése.
-&check; Miden fényképnek legyen neve (max. 40 karakter), és feltöltési dátuma (év-hó-nap óra:perc)
-&check; Fényképek nevének és dátumának listázása név szerint/dátum szerint rendezve.
-&check; Lista egy elemére kattintva mutassa meg a név mögötti képet.
-&check; Felhasználókezelés (regisztráció, belépés, kilépés).
-&check; Feltöltés, törlés csak bejelentkezett felhasználónak engedélyezett.
-&check; Tetszőleges további opcionális funkciók. (fénykép letöltése)
+- &check; Fényképek feltöltése/törlése.
+- &check; Miden fényképnek legyen neve (max. 40 karakter), és feltöltési dátuma (év-hó-nap óra:perc)
+- &check; Fényképek nevének és dátumának listázása név szerint/dátum szerint rendezve.
+- &check; Lista egy elemére kattintva mutassa meg a név mögötti képet.
+- &check; Felhasználókezelés (regisztráció, belépés, kilépés).
+- &check; Feltöltés, törlés csak bejelentkezett felhasználónak engedélyezett.
+- &check; Tetszőleges további opcionális funkciók. (fénykép letöltése)
 
 A backend és a postgresql külön podon fut.
 Az github-os automata build nem fut le, mert 403-as error-t dob.
