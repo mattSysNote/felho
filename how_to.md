@@ -25,7 +25,7 @@ oc new-app "python~https://github.com/mattSysNote/felho.git" --name=django-backe
 ## 7. lépés - deprecated pvc -> blob postgres
 oc set volume deployment/django-backend --add --name=media-storage --type=persistentVolumeClaim --claim-name=media-pvc --mount-path=/opt/app-root/src/media --overwrite
 
-remove command:
+### delete command:
 oc set volume deployment/django-backend --remove --name=media-storage
 oc delete pvc media-pvc
 
@@ -77,7 +77,7 @@ resources:
         memory: 256Mi
 
 
-oc autoscale deployment/django-backend --min=1 --max=5 --cpu-percent=75
+oc autoscale deployment/django-backend --min=1 --max=5 --cpu-percent=50
 oc get hpa
 
 oc run load-generator --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- <myservice> > /dev/null; done"

@@ -1,9 +1,9 @@
 # Infrastruktúra:
-Paas: Redhat Openshift Developer sandbox
-Backend: Python Django
-Frontend: statikus fájlokat szintén a Django szolgálja
-Adatbazás: Postgresql + persistent volume claim
-- A képek metadatait, magát a képet és a felhasználó adatokat szintén a postgres-ban tárolom
+- Paas: Redhat Openshift Developer sandbox
+- Backend: Python Django
+- Frontend: statikus fájlokat szintén a Django szolgálja
+- Adatbazás: Postgresql + persistent volume claim
+    - A képek metadatait, magát a képet és a felhasználó adatokat szintén a postgres-ban tárolom
 
 # Feladat: 
 - &check; Fényképek feltöltése/törlése.
@@ -15,11 +15,12 @@ Adatbazás: Postgresql + persistent volume claim
 - &check; Tetszőleges további opcionális funkciók. (fénykép letöltése)
 
 A backend és a postgresql külön podon fut.
-Az github-os automata build nem fut le, mert 403-as error-t dob.
-Ezért ezzel a paranccsal tudtam elindítani a build-et:
+Az github-os automata build nem fut le, mert 403-as error-t dob, amikor jelezni akar az openshift-nek, szóval jelenleg ezzel a paranccsal tudom elindítani a build-et:
 ```
 oc start-build django-backend --follow
 ```
+A build lekéri a legfrissebb kódokat a repo-ból.
+A felhasználó kezeléshez a django session és auth-ot használtam.
 
 # HPA:
 Első teszteléséhez ezt használtam:
