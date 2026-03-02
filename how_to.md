@@ -1,12 +1,12 @@
 # Postgres:
-## 1. lépés
+## 1. step
 oc new-app postgresql:15-el9 \
     --name=postgresql \
     -e POSTGRESQL_USER=<USER> \
     -e POSTGRESQL_PASSWORD=<PASSWORD> \
     -e POSTGRESQL_DATABASE=<DB_NAME>
 
-## 2. lépés
+## 2. step
 oc set volume deployment/postgresql --add \
     --name=postgresql-data \
     -t pvc \
@@ -15,23 +15,23 @@ oc set volume deployment/postgresql --add \
     --mount-path=/var/lib/pgsql/data
 
 # Backend
-## 4. lépés
+## 4. step
 oc create secret generic github-secret --from-literal=username=mattSysNote --from-literal=password=<PASSWORD> --type=kubernetes.io/basic-auth
-## 5. lépés
+## 5. step
 oc secrets link builder github-secret
-## 6. lépés
+## 6. step
 oc new-app "python~https://github.com/mattSysNote/felho.git" --name=django-backend --source-secret=github-secret -e DB_HOST=postgresql -e DB_PORT=5432 -e DB_NAME=<DB_NAME> -e DB_USER=<USER> -e DB_PASSWORD=<PASSWORD> -e SECRET_KEY=<SECRET_KEY> -e DEBUG=False
 
-## 7. lépés - deprecated pvc -> blob postgres
+## 7. step - deprecated pvc -> blob postgres
 oc set volume deployment/django-backend --add --name=media-storage --type=persistentVolumeClaim --claim-name=media-pvc --mount-path=/opt/app-root/src/media --overwrite
 
 ### delete command:
 oc set volume deployment/django-backend --remove --name=media-storage
 oc delete pvc media-pvc
 
-## 8. lépés
+## 8. step
 oc start-build django-backend
-## 9. lépés
+## 9. step
 oc expose service django-backend --port=8080
 oc scale deployment django-backend --replicas=1
 oc get route django-backend
@@ -40,7 +40,7 @@ oc delete route django-backend
 oc create route edge --service=django-backend --port=8080
 oc start-build django-backend --follow
 
-## 10. lépés
+## 10. step
           command:
             - /bin/bash
             - '-c'
