@@ -4,5 +4,6 @@ gunicorn
 psycopg2-binary
 dj-database-url
 django-storages
+django-db-file-storage
 boto3
 whitenoise

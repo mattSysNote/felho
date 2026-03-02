@@ -11,7 +11,6 @@ class FileBlob(models.Model):
         return self.filename
 
 class Photo(models.Model):
-    # CHANGED: You MUST use this string string. Do not use a function here.
     image = models.ImageField(upload_to='gallery.FileBlob/bytes/filename/mimetype')
     
     title = models.CharField(max_length=40, verbose_name="Kép címe")

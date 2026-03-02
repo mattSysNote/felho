@@ -22,9 +22,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('gallery.urls')), # A gallery app URL-jei
-    path('accounts/', include('django.contrib.auth.urls')), # Beépített Login/Logout
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
 
-# Képek kiszolgálása fejlesztés alatt
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
