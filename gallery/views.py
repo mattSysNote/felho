@@ -4,9 +4,9 @@ from .forms import PhotoUploadForm, RegistrationForm
 from django.core.files.base import ContentFile
 from django.http import HttpResponseForbidden
 from django.contrib.auth import login
+from django.contrib import messages
 from .models import Photo
 from PIL import Image
-import os
 import io
 import uuid
 
@@ -79,12 +79,13 @@ def photo_upload(request):
 def photo_delete(request, pk):
     photo = get_object_or_404(Photo, pk=pk)
     
-    # security only the owner or the admin can delet image
     if request.user != photo.uploaded_by and not request.user.is_superuser:
-        return HttpResponseForbidden("Nincs jogosultsága törölni ezt a képet.")
+        messages.error(request, "Nincs jogosultsága törölni ezt a képet.")
+        return redirect('photo_list')
     
     if request.method == 'POST':
         photo.delete()
+        messages.success(request, "Photo deleted successfully.")
         return redirect('photo_list')
         
     return render(request, 'gallery/photo_confirm_delete.html', {'photo': photo})

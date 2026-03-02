@@ -1,8 +1,7 @@
-from django import forms
-from .models import Photo
 from django.contrib.auth.forms import UserCreationForm
-import os
 from django.core.exceptions import ValidationError
+from .models import Photo
+from django import forms
 from PIL import Image
 
 class PhotoUploadForm(forms.ModelForm):
