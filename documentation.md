@@ -20,7 +20,7 @@ Az github-os automata build nem fut le, mert 403-as error-t dob, amikor jelezni 
 oc start-build django-backend --follow
 ```
 A build lekéri a legfrissebb kódokat a repo-ból.
-A felhasználó kezeléshez a django session és auth-ot használtam.
+A felhasználókezeléshez a django session és auth-ot használtam.
 
 # HPA:
 Első teszteléséhez ezt használtam:
