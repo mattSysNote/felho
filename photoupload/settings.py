@@ -2,6 +2,7 @@
 Django settings for photoupload project.
 """
 
+from datetime import timedelta
 from pathlib import Path
 import os
 
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'gallery',
     'storages',
+    'db_file_storage',
 ]
 
 MIDDLEWARE = [
@@ -144,15 +146,15 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-
 STATIC_URL = 'static/'
 # This defines where collectstatic will put files in the container
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# WhiteNoise configuration for serving static files in production
+# IMAGE storing:
+DB_FILE_STORAGE_MODEL = 'gallery.FileBlob'
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "db_file_storage.storage.DatabaseFileStorage",
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",

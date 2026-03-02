@@ -8,6 +8,22 @@ from .models import Photo
 from PIL import Image
 import os
 import io
+import uuid
+
+# register
+def register(request):
+    if request.user.is_authenticated:
+        return redirect('photo_list')
+
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('photo_list')
+    else:
+        form = RegistrationForm()
+    return render(request, 'registration/register.html', {'form': form})
 
 # list images
 def photo_list(request):
@@ -45,7 +61,8 @@ def photo_upload(request):
             img_format = img.format if img.format else 'JPEG'
             image_without_exif.save(buffer, format=img_format) 
 
-            filename = uploaded_image.name[:40]
+            ext = uploaded_image.name.split('.')[-1]
+            filename = f"{uuid.uuid4()}.{ext}"
 
             photo.image.save(filename, ContentFile(buffer.getvalue()), save=False)
 
@@ -72,17 +89,3 @@ def photo_delete(request, pk):
         
     return render(request, 'gallery/photo_confirm_delete.html', {'photo': photo})
 
-# register
-def register(request):
-    if request.user.is_authenticated:
-        return redirect('photo_list')
-
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('photo_list')
-    else:
-        form = RegistrationForm()
-    return render(request, 'registration/register.html', {'form': form})

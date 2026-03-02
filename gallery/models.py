@@ -1,19 +1,20 @@
-import os
-import uuid
 from django.db import models
 from django.contrib.auth.models import User
 
 
-# uuid for security
-def unique_file_path(instance, filename):
-    ext = filename.split('.')[-1]
-    filename = f"{uuid.uuid4()}.{ext}"
-    return os.path.join('photos', filename)
+class FileBlob(models.Model):
+    bytes = models.TextField()
+    filename = models.CharField(max_length=255) 
+    mimetype = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.filename
 
 class Photo(models.Model):
-    image = models.ImageField(upload_to=unique_file_path)
+    # CHANGED: You MUST use this string string. Do not use a function here.
+    image = models.ImageField(upload_to='gallery.FileBlob/bytes/filename/mimetype')
     
-    title = models.CharField(max_length=40, verbose_name="Kép címe") # original title
+    title = models.CharField(max_length=40, verbose_name="Kép címe")
     uploaded_at = models.DateTimeField(auto_now_add=True)
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
 

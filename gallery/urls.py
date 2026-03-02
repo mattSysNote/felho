@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 urlpatterns = [
@@ -7,4 +7,5 @@ urlpatterns = [
     path('upload/', views.photo_upload, name='photo_upload'),
     path('photo/<int:pk>/delete/', views.photo_delete, name='photo_delete'),
     path('register/', views.register, name='register'),
+    path('media/', include('db_file_storage.urls')),
 ]
