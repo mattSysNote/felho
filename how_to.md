@@ -61,6 +61,7 @@ oc set env deployment/django-backend SECRET_KEY=<SECRET_KEY> DEBUG=False
 oc set env deployment/django-backend DEBUG-
 
 # Stop services
+oc scale deployment/locust-tester --replicas=0
 oc scale deployment/django-backend --replicas=0
 oc scale deployment/postgresql --replicas=0
 
@@ -83,3 +84,17 @@ oc get hpa
 oc run load-generator --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- <myservice> > /dev/null; done"
 
 oc delete pod load-generator
+
+
+# Stress test
+oc new-app "python~https://github.com/mattSysNote/felho.git" --name=locust-tester --source-secret=github-secret
+oc create route edge --service=locust-tester --port=8089
+
+oc start-build locust-tester
+
+plus config:
+          command: ["locust"]
+          args: 
+            - "-f"
+            - "locustfile.py"
+            - "--host=<BACKEND_URL>"

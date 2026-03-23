@@ -34,5 +34,25 @@ django-backend   Deployment/django-backend   cpu: 32%/50%   1         5         
 
 Locust-al még nem lett tesztelve.
 
+Locust tesztelés:
+10 felhasználó:
+NAME             REFERENCE                   TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
+django-backend   Deployment/django-backend   cpu: 16%/25%   1         5         1          6d22h
+
+50 felhasználó:
+![Locust felület](images/locust50.png)
+NAME             REFERENCE                   TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
+django-backend   Deployment/django-backend   cpu: 54%/25%   1         5         1          6d22h
+
+50 felhasználó skálázással:
+NAME             REFERENCE                   TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
+django-backend   Deployment/django-backend   cpu: 54%/25%   1         5         5          6d22h
+
+25 felhasználó skálázással:
+![Locust felület](images/locust25.png)
+NAME             REFERENCE                   TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
+django-backend   Deployment/django-backend   cpu: 19%/25%   1         5         2          6d22h
+
+
 # Parancsok:
 ![Fejlesztéshez használt fontosabb parancsok](how_to.md)
