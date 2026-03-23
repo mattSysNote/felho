@@ -7,3 +7,4 @@ django-storages
 django-db-file-storage
 boto3
 whitenoise
+locust
