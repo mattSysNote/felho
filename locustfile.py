@@ -48,9 +48,10 @@ class DjangoAppUser(HttpUser):
         with self.client.post("/register/", data=payload, catch_response=True, allow_redirects=False, name="Register User") as response:
             if response.status_code == 302:
                 response.success()
-                # Update the username so subsequent login tasks use the newly registered user
                 self.username = new_username
             else:
+                print(f"--- REGISTRATION FAILED --- Status: {response.status_code}")
+                print(response.text)
                 response.failure(f"Registration failed! HTTP {response.status_code}.")
 
     @task(1)
@@ -70,4 +71,6 @@ class DjangoAppUser(HttpUser):
             if response.status_code == 302:
                 response.success()
             else:
+                print(f"--- LOGIN FAILED --- Status: {response.status_code}")
+                print(response.text) 
                 response.failure(f"Login failed! HTTP {response.status_code}.")
