@@ -74,7 +74,7 @@ class DjangoAppUser(HttpUser):
         
         headers = {
             "X-CSRFToken": csrftoken,
-            "Referer": f"{self.client.base_url}/accounts/login/"
+            "Referer": f"{self.client.base_url}/"
         }
         
         with self.client.post("/login/", data=payload, headers=headers, catch_response=True, allow_redirects=False, name="Login User") as response:
