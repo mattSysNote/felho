@@ -89,6 +89,11 @@ oc delete pod load-generator
 # Stress test
 oc new-app "python~https://github.com/mattSysNote/felho.git" --name=locust-tester --source-secret=github-secret
 oc create route edge --service=locust-tester --port=8089
+oc expose service locust-tester --port=8089
+oc delete route locust-tester
+
+deployment:
+port: 8089
 
 oc start-build locust-tester
 
