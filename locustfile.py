@@ -44,14 +44,19 @@ class DjangoAppUser(HttpUser):
             "password2": self.password, 
             "csrfmiddlewaretoken": csrftoken
         }
+        
+        headers = {
+            "X-CSRFToken": csrftoken,
+            "Referer": f"{self.client.base_url}/register/" # Spoof the referer
+        }
 
-        with self.client.post("/register/", data=payload, catch_response=True, allow_redirects=False, name="Register User") as response:
+        with self.client.post("/register/", data=payload, headers=headers, catch_response=True, allow_redirects=False, name="Register User") as response:
             if response.status_code == 302:
                 response.success()
                 self.username = new_username
             else:
                 print(f"--- REGISTRATION FAILED --- Status: {response.status_code}")
-                print(response.text)
+                print(response.text) 
                 response.failure(f"Registration failed! HTTP {response.status_code}.")
 
     @task(1)
@@ -67,7 +72,12 @@ class DjangoAppUser(HttpUser):
             "csrfmiddlewaretoken": csrftoken
         }
         
-        with self.client.post("/accounts/login/", data=payload, catch_response=True, allow_redirects=False, name="Login User") as response:
+        headers = {
+            "X-CSRFToken": csrftoken,
+            "Referer": f"{self.client.base_url}/login/"
+        }
+        
+        with self.client.post("/login/", data=payload, headers=headers, catch_response=True, allow_redirects=False, name="Login User") as response:
             if response.status_code == 302:
                 response.success()
             else:
