@@ -46,7 +46,8 @@ class DjangoAppUser(HttpUser):
         }
         
         headers = {
-            "X-CSRFToken": csrftoken
+            "X-CSRFToken": csrftoken,
+            "Referer": f"{self.client.base_url}/register/" # Spoof the referer
         }
 
         with self.client.post("/register/", data=payload, headers=headers, catch_response=True, allow_redirects=False, name="Register User") as response:
@@ -72,7 +73,8 @@ class DjangoAppUser(HttpUser):
         }
         
         headers = {
-            "X-CSRFToken": csrftoken
+            "X-CSRFToken": csrftoken,
+            "Referer": f"{self.client.base_url}/accounts/login/"
         }
         
         with self.client.post("/login/", data=payload, headers=headers, catch_response=True, allow_redirects=False, name="Login User") as response:
