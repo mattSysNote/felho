@@ -40,7 +40,8 @@ class DjangoAppUser(HttpUser):
 
         payload = {
             "username": new_username,
-            "password": self.password, 
+            "password1": self.password, 
+            "password2": self.password, 
             "csrfmiddlewaretoken": csrftoken
         }
 
@@ -56,7 +57,7 @@ class DjangoAppUser(HttpUser):
     def login_user(self):
         self.client.cookies.clear()
         
-        response = self.client.get("/login/")
+        response = self.client.get("/accounts/login/")
         csrftoken = response.cookies.get("csrftoken", "")
 
         payload = {
@@ -65,7 +66,7 @@ class DjangoAppUser(HttpUser):
             "csrfmiddlewaretoken": csrftoken
         }
         
-        with self.client.post("/login/", data=payload, catch_response=True, allow_redirects=False, name="Login User") as response:
+        with self.client.post("/accounts/login/", data=payload, catch_response=True, allow_redirects=False, name="Login User") as response:
             if response.status_code == 302:
                 response.success()
             else:
