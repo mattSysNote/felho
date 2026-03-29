@@ -23,19 +23,19 @@ class DjangoAppUser(HttpUser):
     def load_register_page(self):
         self.client.get("/register/", name="Load Register Page")
         
-    @task(1)
+    @task(3)
     def register_user(self):
         headers = {"X-CSRFToken": self.csrftoken}
-        payload = {"username": f"user_{random.randint(1, 10000)}", "password": "testpassword123"}
+        payload = {"username": f"user_{random.randint(1, 10000)}", "password": "Testpassword123??"}
         self.client.post("/register/", data=payload, headers=headers, name="Register User")
 
-    @task(2)
+    @task(1)
     def login_user(self):
         headers = {"X-CSRFToken": self.csrftoken}
-        
+
         payload = {
             "username": f"user_{random.randint(1, 10000)}", 
-            "password": "testpassword123"
+            "password": "Testpassword123??"
         }
         
         self.client.post("/login/", data=payload, headers=headers, name="Login User")
