@@ -1,6 +1,8 @@
 from locust import HttpUser, task, between
 import uuid
 import random
+from PIL import Image
+import io
 
 class DjangoAppUser(HttpUser):
     wait_time = between(1, 5)
@@ -10,7 +12,6 @@ class DjangoAppUser(HttpUser):
         response = self.client.get("/")
         self.csrftoken = response.cookies.get('csrftoken', '')
         
-        # Initialize default credentials so tasks don't crash if called out of order
         self.username = f"user_{uuid.uuid4().hex[:8]}"
         self.password = "Testpassword123??"
 
@@ -54,6 +55,7 @@ class DjangoAppUser(HttpUser):
             if response.status_code == 302:
                 response.success()
                 self.username = new_username
+                self.logged_in = True
             else:
                 print(f"--- REGISTRATION FAILED --- Status: {response.status_code}")
                 print(response.text) 
@@ -74,13 +76,74 @@ class DjangoAppUser(HttpUser):
         
         headers = {
             "X-CSRFToken": csrftoken,
-            "Referer": f"{self.client.base_url}/"
+            "Referer": f"{self.client.base_url}/accounts/login/"
         }
         
         with self.client.post("/login/", data=payload, headers=headers, catch_response=True, allow_redirects=False, name="Login User") as response:
             if response.status_code == 302:
                 response.success()
+                self.logged_in = True
             else:
                 print(f"--- LOGIN FAILED --- Status: {response.status_code}")
                 print(response.text) 
                 response.failure(f"Login failed! HTTP {response.status_code}.")
+
+
+    @task(2)
+    def upload_photo(self):
+        if not getattr(self, 'logged_in', False):
+            return  
+        
+        img = Image.new('RGB', (100, 100), color='blue')
+        img_bytes = io.BytesIO()
+        img.save(img_bytes, format='JPEG')
+        img_bytes.seek(0)
+
+        response = self.client.get("/upload/", name="Load Upload Page")
+        csrftoken = response.cookies.get("csrftoken", "")
+
+        files = {
+            'image': ('test_image.jpg', img_bytes, 'image/jpeg')
+        }
+        data = {
+            "csrfmiddlewaretoken": csrftoken,
+            "title": f"Test Photo {uuid.uuid4().hex[:6]}"
+        }
+        headers = {
+            "X-CSRFToken": csrftoken,
+            "Referer": f"{self.client.base_url}/upload/"
+        }
+
+        with self.client.post("/upload/", data=data, files=files, headers=headers, catch_response=True, allow_redirects=False, name="Upload Photo") as response:
+            if response.status_code == 302:
+                response.success()
+            else:
+                print(f"--- UPLOAD FAILED --- Status: {response.status_code}")
+                response.failure(f"Upload failed! HTTP {response.status_code}.")
+
+    @task(1)
+    def delete_photo(self):
+        if not getattr(self, 'logged_in', False):
+            return
+        
+        response = self.client.get("/", name="Load Photo List for Delete")
+        csrftoken = response.cookies.get("csrftoken", "")
+
+        photo_id_to_delete = random.randint(1, 100) 
+
+        data = {
+            "csrfmiddlewaretoken": csrftoken
+        }
+        headers = {
+            "X-CSRFToken": csrftoken,
+            "Referer": f"{self.client.base_url}/delete/{photo_id_to_delete}/" 
+        }
+
+        with self.client.post(f"/delete/{photo_id_to_delete}/", data=data, headers=headers, catch_response=True, allow_redirects=False, name="Delete Photo") as response:
+            
+            if response.status_code == 302:
+                response.success()
+            elif response.status_code == 404:
+                response.success() 
+            else:
+                response.failure(f"Delete failed! HTTP {response.status_code}.")

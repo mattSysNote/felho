@@ -67,6 +67,7 @@ oc scale deployment/postgresql --replicas=0
 
 oc scale deployment/postgresql --replicas=1
 oc scale deployment/django-backend --replicas=1
+oc scale deployment/locust-tester --replicas=1
 
 # HPA:
 resources:
@@ -79,6 +80,7 @@ resources:
 
 
 oc autoscale deployment/django-backend --min=1 --max=5 --cpu-percent=50
+oc delete hpa django-backend
 oc get hpa
 
 oc run load-generator --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- <myservice> > /dev/null; done"
