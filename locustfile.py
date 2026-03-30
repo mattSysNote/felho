@@ -81,7 +81,7 @@ class DjangoAppUser(HttpUser):
         }
         
         with self.client.post("/accounts/login/", data=payload, headers=headers, catch_response=True, allow_redirects=False, name="Login User") as response:
-            if response.status_code == 302:
+            if response.status_code == 200:
                 response.success()
                 self.logged_in = True
             else:
