@@ -3,6 +3,7 @@ import uuid
 import random
 from PIL import Image
 import io
+import os
 
 class DjangoAppUser(HttpUser):
     wait_time = between(1, 5)
@@ -79,7 +80,7 @@ class DjangoAppUser(HttpUser):
             "Referer": f"{self.client.base_url}/accounts/login/"
         }
         
-        with self.client.post("/login/", data=payload, headers=headers, catch_response=True, allow_redirects=False, name="Login User") as response:
+        with self.client.post("/accounts/login/", data=payload, headers=headers, catch_response=True, allow_redirects=False, name="Login User") as response:
             if response.status_code == 302:
                 response.success()
                 self.logged_in = True
@@ -94,7 +95,9 @@ class DjangoAppUser(HttpUser):
         if not getattr(self, 'logged_in', False):
             return  
         
-        img = Image.new('RGB', (100, 100), color='blue')
+        width, height = 250, 250
+        random_bytes = os.urandom(width * height * 3)
+        img = Image.frombytes('RGB', (width, height), random_bytes)
         img_bytes = io.BytesIO()
         img.save(img_bytes, format='JPEG')
         img_bytes.seek(0)
