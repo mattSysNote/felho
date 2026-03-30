@@ -68,7 +68,7 @@ def photo_upload(request):
 
             photo.uploaded_by = request.user
             photo.save()
-            return redirect('photo_list')
+            return redirect('photo_detail', pk=photo.pk)
     else:
         form = PhotoUploadForm()
     

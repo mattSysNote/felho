@@ -1,3 +1,5 @@
+import re
+
 from locust import HttpUser, task, between
 import uuid
 import random
@@ -17,6 +19,7 @@ class DjangoAppUser(HttpUser):
         self.password = "Testpassword123??"
         self.logged_in = False
         self.registered = False
+        self.uploaded_photo_list = []
 
     @task(4)
     def view_photo_list(self):
@@ -101,8 +104,11 @@ class DjangoAppUser(HttpUser):
             return  
         
         width, height = 250, 250
-        random_bytes = os.urandom(width * height * 3)
-        img = Image.frombytes('RGB', (width, height), random_bytes)
+        block_size = 10 
+        small_w, small_h = width // block_size, height // block_size
+        random_bytes = os.urandom(small_w * small_h * 3)
+        img_small = Image.frombytes('RGB', (small_w, small_h), random_bytes)
+        img = img_small.resize((width, height), resample=Image.NEAREST)
         img_bytes = io.BytesIO()
         img.save(img_bytes, format='JPEG')
         img_bytes.seek(0)
@@ -115,7 +121,7 @@ class DjangoAppUser(HttpUser):
         }
         data = {
             "csrfmiddlewaretoken": csrftoken,
-            "title": f"Test Photo {uuid.uuid4().hex[:6]}"
+            "title": f"Photo {uuid.uuid4().hex[:12]}"
         }
         headers = {
             "X-CSRFToken": csrftoken,
@@ -125,6 +131,13 @@ class DjangoAppUser(HttpUser):
         with self.client.post("/upload/", data=data, files=files, headers=headers, catch_response=True, allow_redirects=False, name="Upload Photo") as response:
             if response.status_code == 302:
                 response.success()
+                redirect_url = response.headers.get('Location', '')
+                match = re.search(r'/(\d+)/', redirect_url)
+                if match:
+                    new_photo_id = match.group(1)
+                    if not hasattr(self, 'uploaded_photo_list'):
+                        self.uploaded_photo_list = []
+                    self.uploaded_photo_list.append(new_photo_id)
             # else:
             #     print(f"--- UPLOAD FAILED --- Status: {response.status_code}")
             #     response.failure(f"Upload failed! HTTP {response.status_code}.")
@@ -137,7 +150,11 @@ class DjangoAppUser(HttpUser):
         response = self.client.get("/", name="Load Photo List for Delete")
         csrftoken = response.cookies.get("csrftoken", "")
 
-        photo_id_to_delete = random.randint(1, 100) 
+        photo_ids = getattr(self, 'uploaded_photo_list', [])
+        if not photo_ids:
+            return
+        random_index = random.randrange(len(photo_ids))
+        photo_id_to_delete = photo_ids.pop(random_index)
 
         data = {
             "csrfmiddlewaretoken": csrftoken

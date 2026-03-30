@@ -7,12 +7,16 @@ oc new-app postgresql:15-el9 \
     -e POSTGRESQL_DATABASE=<DB_NAME>
 
 ## 2. step
+oc delete pvc postgresql-pvc
 oc set volume deployment/postgresql --add \
     --name=postgresql-data \
     -t pvc \
     --claim-name=postgresql-pvc \
     --claim-size=1Gi \
     --mount-path=/var/lib/pgsql/data
+
+oc set volume deployment/postgresql --remove --name=postgresql-data
+oc delete pvc postgresql-pvc
 
 # Backend
 ## 4. step
