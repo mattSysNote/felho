@@ -168,8 +168,6 @@ class DjangoAppUser(HttpUser):
             
             if response.status_code == 302:
                 response.success()
-            elif response.status_code == 404:
-                response.success() 
             else:
                 response.failure(f"Delete failed! HTTP {response.status_code}.")
 

@@ -23,6 +23,22 @@ A build lekéri a legfrissebb kódokat a repo-ból.
 A felhasználókezeléshez a django session-t és auth-ot használtam.
 
 # HPA:
+Beállítottam az erőforrásokat a backend-nek:
+```
+resources:
+    limits:
+        cpu: 500m
+        memory: 512Mi
+    requests:
+        cpu: 200m
+        memory: 256Mi
+```
+
+Majd létrehoztam egy HPA:
+```
+oc autoscale deployment/django-backend --min=1 --max=5 --cpu-percent=50
+```
+
 Első teszteléséhez ezt használtam:
 oc run load-generator --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- <myservice> > /dev/null; done"
 
@@ -32,27 +48,60 @@ NAME             REFERENCE                   TARGETS        MINPODS   MAXPODS   
 django-backend   Deployment/django-backend   cpu: 32%/50%   1         5         2          27m
 ```
 
-Locust-al még nem lett tesztelve.
+## Locust tesztelés:
+Létrehoztam egy külön Locust pod-ot ugyanabból a build-ből, mint amiből a django backend volt, csak kicseréltem az indító parancsokat:
+        containers:
+          command: ["locust"]
+          args: 
+            - "-f"
+            - "locustfile.py"
+            - "--host=<BACKEND_URL>"
 
-Locust tesztelés:
-10 felhasználó:
-NAME             REFERENCE                   TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
-django-backend   Deployment/django-backend   cpu: 16%/25%   1         5         1          6d22h
+A locust-tal az összes endpointot teszteltem:
+![Locust config](locustfile.py)
 
-50 felhasználó:
-![Locust felület](images/locust50.png)
-NAME             REFERENCE                   TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
-django-backend   Deployment/django-backend   cpu: 54%/25%   1         5         1          6d22h
+1000 felhasználót teszteltem.
+![Locust charts](images/locust1000.png)
 
-50 felhasználó skálázással:
-NAME             REFERENCE                   TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
-django-backend   Deployment/django-backend   cpu: 54%/25%   1         5         5          6d22h
+Jól látszik, hogy a rendszer 400 felhasználóig hiba nélkül tud működni.
+500 felhasználónál nagyon megnövekedett a hibák száma.
+600 felhasználónál a rendszer néhány kérést már nem tud kiszolgálni.
+De olyan 750 felhasználónál már nem tudja kiszolgálni a kéréseket, vagy csak nagyon késve
 
-25 felhasználó skálázással:
-![Locust felület](images/locust25.png)
-NAME             REFERENCE                   TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
-django-backend   Deployment/django-backend   cpu: 19%/25%   1         5         2          6d22h
+![HPA Scaling](images/locust1000_scaling.png)
+![Locust requests](images/locust1000_requests.png)
 
+Eredmények:
+Final ratio
+Ratio Per Class
+
+    100.0% DjangoAppUser
+        6.7% deletePhoto
+        6.7% loadRegisterPage
+        6.7% loginUser
+        6.7% logoutUser
+        20.0% registerUser
+        13.3% uploadPhoto
+        13.3% viewPhotoDetail
+        26.7% viewPhotoList
+
+Total Ratio
+
+    100.0% DjangoAppUser
+        6.7% deletePhoto
+        6.7% loadRegisterPage
+        6.7% loginUser
+        6.7% logoutUser
+        20.0% registerUser
+        13.3% uploadPhoto
+        13.3% viewPhotoDetail
+        26.7% viewPhotoList
+
+
+Kipróbáltam 600 felhasználóval is és hagytam hogy fusson tovább a ramp up után:
+![Locust charts](images/locust600.png)
+Itt is jól látszik, hogy 400 után elkezd hibákat dobni a rendszer.
+És a ramp up utána rendes 600 felhasználó alatt sem tud jól működni.
 
 # Parancsok:
 ![Fejlesztéshez használt fontosabb parancsok](how_to.md)
