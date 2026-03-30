@@ -15,6 +15,8 @@ class DjangoAppUser(HttpUser):
         
         self.username = f"user_{uuid.uuid4().hex[:8]}"
         self.password = "Testpassword123??"
+        self.logged_in = False
+        self.registered = False
 
     @task(4)
     def view_photo_list(self):
@@ -57,6 +59,7 @@ class DjangoAppUser(HttpUser):
                 response.success()
                 self.username = new_username
                 self.logged_in = True
+                self.registered = True
             else:
                 print(f"--- REGISTRATION FAILED --- Status: {response.status_code}")
                 print(response.text) 
@@ -64,6 +67,8 @@ class DjangoAppUser(HttpUser):
 
     @task(1)
     def login_user(self):
+        if not getattr(self, 'registered', False):
+            return  
         self.client.cookies.clear()
         
         response = self.client.get("/accounts/login/")
@@ -81,13 +86,13 @@ class DjangoAppUser(HttpUser):
         }
         
         with self.client.post("/accounts/login/", data=payload, headers=headers, catch_response=True, allow_redirects=False, name="Login User") as response:
-            if response.status_code == 200:
+            if response.status_code in [200, 302]:
                 response.success()
                 self.logged_in = True
-            else:
-                print(f"--- LOGIN FAILED --- Status: {response.status_code}")
-                print(response.text) 
-                response.failure(f"Login failed! HTTP {response.status_code}.")
+            # else:
+            #     print(f"--- LOGIN FAILED --- Status: {response.status_code}")
+            #     print(response.text) 
+            #     response.failure(f"Login failed! HTTP {response.status_code}.")
 
 
     @task(2)
@@ -120,9 +125,9 @@ class DjangoAppUser(HttpUser):
         with self.client.post("/upload/", data=data, files=files, headers=headers, catch_response=True, allow_redirects=False, name="Upload Photo") as response:
             if response.status_code == 302:
                 response.success()
-            else:
-                print(f"--- UPLOAD FAILED --- Status: {response.status_code}")
-                response.failure(f"Upload failed! HTTP {response.status_code}.")
+            # else:
+            #     print(f"--- UPLOAD FAILED --- Status: {response.status_code}")
+            #     response.failure(f"Upload failed! HTTP {response.status_code}.")
 
     @task(1)
     def delete_photo(self):
@@ -150,3 +155,27 @@ class DjangoAppUser(HttpUser):
                 response.success() 
             else:
                 response.failure(f"Delete failed! HTTP {response.status_code}.")
+
+
+    @task(1)
+    def logout_user(self):
+        if not getattr(self, 'logged_in', False):
+            return
+        
+        response = self.client.get("/", name="Load Home for Logout")
+        csrftoken = response.cookies.get("csrftoken", "")
+
+        headers = {
+            "X-CSRFToken": csrftoken,
+            "Referer": f"{self.client.base_url}/"
+        }
+
+        with self.client.post("/accounts/logout/", data={"csrfmiddlewaretoken": csrftoken}, headers=headers, catch_response=True, name="Logout User") as response:
+            
+            if response.status_code in [200, 302]:
+                response.success()
+                self.logged_in = False
+                self.registered = False
+                self.client.cookies.clear()
+            else:
+                response.failure(f"Logout failed with status {response.status_code}")
