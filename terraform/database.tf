@@ -1,4 +1,4 @@
-data "kubernetes_persistent_volume_claim" "postgres_pvc" {
+resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
   metadata {
     name      = "postgresql-pvc"
     namespace = var.namespace
@@ -16,7 +16,7 @@ data "kubernetes_persistent_volume_claim" "postgres_pvc" {
 
 # PostgreSQL 
 resource "kubernetes_deployment" "postgres" {
-  #wait_for_rollout = false
+  # wait_for_rollout = false
   metadata {
     name      = "postgresql"
     namespace = var.namespace
@@ -60,7 +60,7 @@ resource "kubernetes_deployment" "postgres" {
         volume {
           name = "postgresql-data"
           persistent_volume_claim {
-            claim_name = data.kubernetes_persistent_volume_claim.postgres_pvc.metadata[0].name
+            claim_name = kubernetes_persistent_volume_claim.postgres_pvc.metadata[0].name
           }
         }
       }

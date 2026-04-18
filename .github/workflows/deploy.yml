@@ -38,13 +38,22 @@ jobs:
       working-directory: ./terraform
       run: terraform init
 
+    - name: Import existing PVC
+      working-directory: ./terraform
+      env:
+        TF_VAR_openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL }}
+        TF_VAR_openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+        TF_VAR_namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
+      run: terraform import kubernetes_persistent_volume_claim.postgres_pvc ${{ secrets.OPENSHIFT_NAMESPACE }}/postgresql-pvc
+      continue-on-error: true
+
     - name: Terraform Apply
       working-directory: ./terraform
       env:
         TF_VAR_openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL }}
         TF_VAR_openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
         TF_VAR_namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
-        
+
         TF_VAR_docker_image_tag: ${{ env.IMAGE_TAG }}
         
         TF_VAR_django_secret_key: ${{ secrets.DJANGO_SECRET_KEY }}
