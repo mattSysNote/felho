@@ -109,3 +109,7 @@ plus config:
             - "-f"
             - "locustfile.py"
             - "--host=<BACKEND_URL>"
+
+
+IaC
+oc whoami -t
