@@ -1,10 +1,16 @@
 resource "kubernetes_deployment" "django" {
+    depends_on = [
+        kubernetes_deployment.postgres,
+        kubernetes_service.postgres
+    ]
+
   metadata {
     name      = "django-backend"
     namespace = var.namespace
   }
   spec {
     replicas = 1
+    wait_for_rollout = false
     selector {
       match_labels = {
         app = "django-backend"

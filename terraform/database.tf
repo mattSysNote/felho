@@ -11,6 +11,7 @@ resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
       }
     }
   }
+    wait_until_bound = false
 }
 
 # PostgreSQL 
@@ -21,6 +22,7 @@ resource "kubernetes_deployment" "postgres" {
   }
   spec {
     replicas = 1
+    wait_for_rollout = false
     selector {
       match_labels = {
         app = "postgresql"
