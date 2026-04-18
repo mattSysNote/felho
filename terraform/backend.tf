@@ -1,5 +1,5 @@
 resource "kubernetes_deployment" "django" {
-    wait_for_rollout = false
+    #wait_for_rollout = false
     depends_on = [
         kubernetes_deployment.postgres,
         kubernetes_service.postgres
