@@ -108,15 +108,23 @@ resource "kubernetes_ingress_v1" "django_route" {
   metadata {
     name      = "django-route"
     namespace = var.namespace
+    
+    annotations = {
+      "route.openshift.io/termination" = "edge"
+    }
   }
   spec {
+    tls {}
+
     rule {
       http {
         path {
           path = "/"
+          path_type = "Prefix" 
+          
           backend {
             service {
-              name = kubernetes_service.django.metadata.0.name
+              name = kubernetes_service.django.metadata[0].name
               port {
                 number = 8080
               }
