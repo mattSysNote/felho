@@ -51,3 +51,15 @@ variable "db_password" {
   description = "db_password"
   sensitive   = true
 }
+
+variable "allowed_hosts" {
+  type        = string
+  description = "Django ALLOWED_HOSTS"
+  default     = "*" 
+}
+
+variable "csrf_trusted_origins" {
+  type        = string
+  description = "Django CSRF_TRUSTED_ORIGINS"
+  default     = "https://*" 
+}
