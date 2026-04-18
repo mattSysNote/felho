@@ -10,6 +10,7 @@ COPY photoupload ./photoupload
 COPY gallery ./gallery
 
 RUN chgrp -R 0 /app && chmod -R g=u /app
+RUN python manage.py collectstatic --noinput
 
 EXPOSE 8080
 
