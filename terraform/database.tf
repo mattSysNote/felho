@@ -22,7 +22,6 @@ resource "kubernetes_deployment" "postgres" {
   }
   spec {
     replicas = 1
-    wait_for_rollout = false
     selector {
       match_labels = {
         app = "postgresql"

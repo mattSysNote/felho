@@ -113,3 +113,8 @@ plus config:
 
 IaC
 oc whoami -t
+
+
+oc delete all -l app=django-backend
+oc delete all -l app=postgresql
+oc delete pvc postgresql-pvc
