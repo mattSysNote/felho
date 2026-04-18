@@ -1,4 +1,5 @@
 resource "kubernetes_deployment" "django" {
+    wait_for_rollout = false
     depends_on = [
         kubernetes_deployment.postgres,
         kubernetes_service.postgres
@@ -10,7 +11,6 @@ resource "kubernetes_deployment" "django" {
   }
   spec {
     replicas = 1
-    wait_for_rollout = false
     selector {
       match_labels = {
         app = "django-backend"

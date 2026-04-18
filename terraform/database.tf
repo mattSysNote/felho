@@ -16,6 +16,7 @@ resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
 
 # PostgreSQL 
 resource "kubernetes_deployment" "postgres" {
+  wait_for_rollout = false
   metadata {
     name      = "postgresql"
     namespace = var.namespace
