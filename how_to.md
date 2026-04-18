@@ -115,6 +115,13 @@ IaC
 oc whoami -t
 
 
+
+# DELETE
 oc delete all -l app=django-backend
-oc delete all -l app=postgresql
+oc delete svc django-backend
+oc delete deployment django-backend
+oc delete svc postgresql
+oc delete deployment postgresql
 oc delete pvc postgresql-pvc
+oc delete ingress django-route
+oc delete hpa django-backend-hpa

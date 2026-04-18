@@ -45,7 +45,7 @@ jobs:
         TF_VAR_openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
         TF_VAR_namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
         
-        TF_VAR_docker_image_tag: ghcr.io/${{ github.repository }}/django-backend:${{ github.sha }}
+        TF_VAR_docker_image_tag: ${{ env.IMAGE_TAG }}
         
         TF_VAR_django_secret_key: ${{ secrets.DJANGO_SECRET_KEY }}
         TF_VAR_db_name: ${{ secrets.DB_NAME }}
