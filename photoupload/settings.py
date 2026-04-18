@@ -57,36 +57,38 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
 ]
 
 ROOT_URLCONF = 'photoupload.urls'
 
-from django.utils.csp import CSP
-SECURE_CSP = {
-    "default-src": [CSP.SELF],
-    "style-src": [
-        "'self'",
-        "https://fonts.googleapis.com",
-        "https://cdnjs.cloudflare.com",
-        "'unsafe-inline'" # tailwindcss static generation needed with npm
-    ],
-    "script-src": [
-        "'self'",
-        "https://cdn.tailwindcss.com",
-        "'unsafe-eval'" # tailwindcss static generation needed with npm.
-    ],
-    "font-src": [
-        "'self'",
-        "https://fonts.gstatic.com",
-        "https://cdnjs.cloudflare.com"
-    ],
-    "img-src": [
-        "'self'",
-        "data:",
-        "https://cdnjs.cloudflare.com",
-        "https://*.gstatic.com",
-    ]
-}
+CSP_DEFAULT_SRC = ("'self'",)
+
+CSP_STYLE_SRC = (
+    "'self'",
+    "https://fonts.googleapis.com",
+    "https://cdnjs.cloudflare.com",
+    "'unsafe-inline'" # tailwindcss static generation needed with npm
+)
+
+CSP_SCRIPT_SRC = (
+    "'self'",
+    "https://cdn.tailwindcss.com",
+    "'unsafe-eval'" # tailwindcss static generation needed with npm.
+)
+
+CSP_FONT_SRC = (
+    "'self'",
+    "https://fonts.gstatic.com",
+    "https://cdnjs.cloudflare.com"
+)
+
+CSP_IMG_SRC = (
+    "'self'",
+    "data:",
+    "https://cdnjs.cloudflare.com",
+    "https://*.gstatic.com",
+)
 
 TEMPLATES = [
     {
