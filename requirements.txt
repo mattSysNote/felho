@@ -5,6 +5,7 @@ psycopg2-binary
 dj-database-url
 django-storages
 django-db-file-storage
+django-csp
 boto3
 whitenoise
 locust
