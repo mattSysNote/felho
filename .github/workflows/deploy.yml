@@ -102,4 +102,4 @@ jobs:
         
         TF_VAR_github_username: ${{ secrets.GHCR_USERNAME }}
         TF_VAR_github_token: ${{ secrets.GHCR_PAT }}
-      run: terraform apply -auto-approve -lock=false
+      run: terraform apply -auto-approve
