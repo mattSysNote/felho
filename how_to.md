@@ -120,9 +120,13 @@ oc whoami -t
 oc delete all -l app=django-backend
 oc delete svc django-backend
 oc delete deployment django-backend
-oc delete route django-backend
 oc delete svc postgresql
 oc delete deployment postgresql
 oc delete pvc postgresql-pvc
 oc delete ingress django-route
 oc delete hpa django-backend-hpa
+
+
+
+
+oc delete route django-backend
