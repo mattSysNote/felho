@@ -49,6 +49,7 @@ jobs:
     - name: Import existing PVC
       working-directory: ./terraform
       env:
+        TF_LOG: DEBUG
         TF_VAR_openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL }}
         TF_VAR_openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
         TF_VAR_namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
