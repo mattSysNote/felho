@@ -104,15 +104,16 @@ Itt is jól látszik, hogy 400 után elkezd hibákat dobni a rendszer.
 És a ramp up utána rendes 600 felhasználó alatt sem tud jól működni.
 
 
-# Terraform
+# IaC
+A feladat megoldásához terraform-ot használtam.
 Létrehoztam a ![deploy.yml](.github/workflows/deploy.yml), ez által indul el a github action ami build-eli az image-eket
-és elküldi az openshift cluster-nek. Csak akkor indul el ez a flow ha, módosul a kód.
+és elküldi az openshift cluster-nek. Csak akkor indul el ez a flow ha módosul a kód.
 Mivel a nevem tartalmaz nagybetűket, ezért van benne egy plusz lépés ami átalakítja a nevemet kisbetűssé a docker image-hez.
 
 Az egyes változókat github-ban tárolom és a terraform, onnan olvassa be, ehhez pluszba létre kellett hoznom a variables.tf, hogy a terraform 
 felismerje a változókat a többi terraform fájlban.
 
-Ahhoz hogy kövesse az állapotokat a deploy, ezért elmentem a openshift clusterbe az állapotokat a build-ek között.
+Ahhoz hogy kövesse az állapotokat a deploy, ezért elmentettem a openshift clusterbe az állapotokat a build-ek között.
 Ehhez kellett a 'Log in to OpenShift' és a 'Terraform Init' lépés a config mentéssel. 
 
 A provider.tf-ben van a terraform alap config-ja, database.tf-ben található a postgre sql config-ja és annak a pvc-nek a config-ja.

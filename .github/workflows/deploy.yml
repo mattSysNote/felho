@@ -68,7 +68,7 @@ jobs:
       working-directory: ./terraform
       env:
         KUBE_CONFIG_PATH: ${{ env.KUBECONFIG }}
-        TF_LOG: DEBUG
+        # TF_LOG: DEBUG
         TF_VAR_openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL }}
         TF_VAR_openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
         TF_VAR_namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
