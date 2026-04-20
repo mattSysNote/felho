@@ -1,4 +1,7 @@
 terraform {
+  backend "kubernetes" {
+    secret_suffix = "tfstate"
+  }
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"

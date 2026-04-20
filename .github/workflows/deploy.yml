@@ -44,7 +44,15 @@ jobs:
 
     - name: Terraform Init
       working-directory: ./terraform
-      run: terraform init
+      env:
+        KUBE_HOST: ${{ secrets.OPENSHIFT_SERVER_URL }}
+        KUBE_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+        KUBE_NAMESPACE: ${{ secrets.OPENSHIFT_NAMESPACE }}
+      run: |
+        terraform init \
+          -backend-config="host=$KUBE_HOST" \
+          -backend-config="token=$KUBE_TOKEN" \
+          -backend-config="namespace=$KUBE_NAMESPACE"
 
     - name: Import existing PVC
       working-directory: ./terraform
