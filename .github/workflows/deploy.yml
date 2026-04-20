@@ -57,18 +57,16 @@ jobs:
     - name: Terraform Init
       working-directory: ./terraform
       env:
-        KUBE_HOST: ${{ secrets.OPENSHIFT_SERVER_URL }}
-        KUBE_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
-        KUBE_NAMESPACE: ${{ secrets.OPENSHIFT_NAMESPACE }}
+        KUBE_CONFIG_PATH: ${{ env.KUBECONFIG }}
       run: |
         terraform init \
-          -backend-config="host=$KUBE_HOST" \
-          -backend-config="token=$KUBE_TOKEN" \
-          -backend-config="namespace=$KUBE_NAMESPACE"
+          -backend-config="config_path=$KUBECONFIG" \
+          -backend-config="namespace=${{ secrets.OPENSHIFT_NAMESPACE }}"
 
     - name: Import existing PVC
       working-directory: ./terraform
       env:
+        KUBE_CONFIG_PATH: ${{ env.KUBECONFIG }}
         TF_LOG: DEBUG
         TF_VAR_openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL }}
         TF_VAR_openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
@@ -88,6 +86,8 @@ jobs:
     - name: Terraform Apply
       working-directory: ./terraform
       env:
+        KUBE_CONFIG_PATH: ${{ env.KUBECONFIG }}
+
         TF_VAR_openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL }}
         TF_VAR_openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
         TF_VAR_namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
