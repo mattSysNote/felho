@@ -41,7 +41,13 @@ jobs:
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
-      
+
+    - name: Log in to OpenShift
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL }}
+        openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+        namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
 
     - name: Terraform Init
       working-directory: ./terraform
