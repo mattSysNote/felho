@@ -11,12 +11,12 @@ resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
       }
     }
   }
-    wait_until_bound = false
+    #wait_until_bound = false
 }
 
 # PostgreSQL 
 resource "kubernetes_deployment" "postgres" {
-  wait_for_rollout = false
+  #wait_for_rollout = false
   metadata {
     name      = "postgresql"
     namespace = var.namespace
