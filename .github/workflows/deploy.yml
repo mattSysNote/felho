@@ -4,6 +4,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
+      - '.github/workflows/deploy.yml'
       - "Dockerfile"
       - "manage.py"
       - "requirements.txt"
