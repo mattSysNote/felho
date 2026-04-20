@@ -53,6 +53,7 @@ jobs:
         openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL }}
         openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
         namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
+        
 
     - name: Terraform Init
       working-directory: ./terraform
